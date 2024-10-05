@@ -13,6 +13,7 @@
 // about the type that has been passed in. All of this logic will
 // be performed entirely at compile time.
 //
+const std = @import("std");
 const print = @import("std").debug.print;
 
 // Let's define three structs: Duck, RubberDuck, and Duct. Notice
@@ -101,6 +102,7 @@ pub fn main() void {
         .galvanized = true,
     };
 
+
     print("ducky1: {}, ", .{isADuck(ducky1)});
     print("ducky2: {}, ", .{isADuck(ducky2)});
     print("ducky3: {}\n", .{isADuck(ducky3)});
@@ -123,8 +125,8 @@ fn isADuck(possible_duck: anytype) bool {
     // Please make sure MyType has both waddle() and quack()
     // methods:
     const MyType = @TypeOf(possible_duck);
-    const walks_like_duck = ???;
-    const quacks_like_duck = ???;
+    const walks_like_duck = @hasDecl(MyType, "waddle");
+    const quacks_like_duck = @hasDecl(MyType, "quack");
 
     const is_duck = walks_like_duck and quacks_like_duck;
 
