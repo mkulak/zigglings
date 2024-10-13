@@ -22,29 +22,14 @@ const Path = struct {
     dist: u8,
 };
 
-fn makePath(comptime from: *Place, comptime to: *Place, comptime dist: u8) Path {
-    return Path { .from = from, .to = to, .dist = dist};
-}
-
-
-// const paths = parsePaths(
-//     \\a -> (b[2])
-//     \\b -> (a[2] d[1])
-//     \\c -> (d[3] e[2])
-//     \\d -> (b[1] c[3] f[7])
-//     \\e -> (c[2] f[1])
-//     \\f -> (d[7])
-// );
-
-const paths = [_][]const Path {
-    makePathDsl("a -> (b[2])"),
-    makePathDsl("b -> (a[2] d[1])"),
-    makePathDsl("c -> (d[3] e[2])"),
-    makePathDsl("d -> (b[1] c[3] f[7])"),
-    makePathDsl("e -> (c[2] f[1])"),
-    makePathDsl("f -> (d[7])")
-};
-
+const paths: []const []const Path = parsePaths(
+    \\a -> (b[2])
+    \\b -> (a[2] d[1])
+    \\c -> (d[3] e[2])
+    \\d -> (b[1] c[3] f[7])
+    \\e -> (c[2] f[1])
+    \\f -> (d[7])
+);
 
 fn count(comptime str: []const u8, toFind: u8) usize {
     var res: usize = 0;
@@ -56,20 +41,20 @@ fn count(comptime str: []const u8, toFind: u8) usize {
     return res;
 }
 
-fn parsePaths(comptime input: []const u8) [6][]const Path {
+fn parsePaths(comptime input: []const u8) []const []const Path {
     const linesCount = count(input, '\n') + 1;
     var res: [linesCount][]const Path = undefined;
     var nextPath = 0;
     var lineStart = 0;
-    for (0..input.len) |i| {
-        if (input[i] == '\n') {
+    for (0..input.len + 1) |i| {
+        if (i == input.len or input[i] == '\n') {
             res[nextPath] = makePathDsl(input[lineStart..i]);
             nextPath += 1;
             lineStart = i + 1;
         }
     }
     const c_res = comptime res;
-    return c_res;
+    return c_res[0..];
 }
 
 fn makePathDsl(comptime s:[] const u8) []const Path {
